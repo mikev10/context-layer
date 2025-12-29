@@ -1,0 +1,16 @@
+{
+	"messages": [
+		{
+			"role": "system",
+			"content": "You are a helpful assistant."
+		},
+		{
+			"role": "user",
+			"content": "Explain: Actors"
+		},
+		{
+			"role": "assistant",
+			"content": "On this pageActorsCopy for LLMLearn how to develop, run and share serverless cloud programs. Create your own web scraping and automation tools and publish them on the Apify platform. Running ActorsIn this section, you learn how to run Apify Actors. You will learn about their configuration, versioning, data retention, usage, and pricing.Actor developmentRead about the technical part of building Apify Actors. Learn to define Actor inputs, build new versions, persist Actor state, and choose base Docker images.Publishing and monetizationLearn about publishing, and monetizing your Actors on the Apify platform. Actors overview Actors are serverless cloud programs that can perform anything from a simple action, like filling out a web form, to a complex operation, like crawling an entire website or removing duplicates from a large dataset. Because Actors can persist their state and be restarted, their runs can be as short or as long as necessary, from seconds to hours, or even indefinitely. Basically, Actors are programs packaged as Docker images, which accept a well-defined JSON input, perform an action, and optionally produce a well-defined JSON output. Additional contextFor more context, read the Actor whitepaper. Actor components Actors consist of these elements: Dockerfile which specifies where the Actor's source code is, how to build it, and run it. Documentation in a form of a README.md file. Input and output schemas that describe what input the Actor requires, and what results it produces. Access to an out-of-the-box storage system for Actor data, results, and files. Metadata such as the Actor name, description, author, and version. The documentation and input/output schemas help people understand what the Actor does, enter required inputs in the user interface or API, and integrate results into other workflows. Actors can call and interact with each other to build more complex systems from simple ones. Build Actors Build Actors to automate tasks, scrape data, or create custom workflows. The Apify platform gives you everything you need to develop, test, and deploy your code. Ready to start? Check out the Actor development documentation. Running Actors You can run Actors manually in Apify Console, using the API, CLI, or scheduler. You can easily integrate Actors with other apps, share them with other people, publish them in Apify Store, and even monetize. Try ActorsTo get a better idea of what Apify Actors are, visit Apify Store and try out some of them! Public and private Actors Actors can be public or private. Private Actors are yours to use and keep; no one will see them if you don't want them to. Public Actors are available to everyone in Apify Store. You can make them free to use, or you can charge for them.Actors overviewActor componentsBuild ActorsRunning ActorsPublic and private Actors"
+		}
+	]
+}

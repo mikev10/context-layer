@@ -1,0 +1,9 @@
+{
+    "startUrl": "https://docs.apify.com/platform/actors",
+    "maxPages": 3,
+    "crawlDepth": 1,
+    "outputFormat": "finetune-openai",
+    "enrichment": {
+        "enabled": false
+    }
+}

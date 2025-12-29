@@ -1,0 +1,133 @@
+{
+    "title": "Context Layer Input",
+    "description": "Configure how to crawl, chunk, and enrich your knowledge base",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "startUrl": {
+            "title": "Start URL",
+            "type": "string",
+            "description": "The URL of the knowledge base or documentation site to process",
+            "editor": "textfield",
+            "prefill": "https://docs.apify.com"
+        },
+        "maxPages": {
+            "title": "Max Pages",
+            "type": "integer",
+            "description": "Maximum number of pages to crawl (0 = unlimited)",
+            "default": 50,
+            "minimum": 0,
+            "maximum": 10000
+        },
+        "crawlDepth": {
+            "title": "Crawl Depth",
+            "type": "integer",
+            "description": "How many links deep to follow from the start URL",
+            "default": 3,
+            "minimum": 1,
+            "maximum": 10
+        },
+        "urlPatterns": {
+            "sectionCaption": "URL Filtering",
+            "title": "URL Patterns to Include",
+            "type": "array",
+            "description": "Only crawl URLs matching these patterns (glob format). Leave empty to crawl all.",
+            "editor": "stringList",
+            "default": []
+        },
+        "excludePatterns": {
+            "title": "URL Patterns to Exclude",
+            "type": "array",
+            "description": "Skip URLs matching these patterns",
+            "editor": "stringList",
+            "default": ["**/changelog**", "**/blog**", "**/news**"]
+        },
+        "chunkSize": {
+            "sectionCaption": "Chunking",
+            "title": "Chunk Size (tokens)",
+            "type": "integer",
+            "description": "Target size for each chunk in tokens. Set to 0 for auto-detection based on output format.",
+            "default": 0,
+            "minimum": 0,
+            "maximum": 8000
+        },
+        "chunkOverlap": {
+            "title": "Chunk Overlap (tokens)",
+            "type": "integer",
+            "description": "Number of overlapping tokens between chunks for context preservation",
+            "default": 50,
+            "minimum": 0,
+            "maximum": 500
+        },
+        "outputFormat": {
+            "sectionCaption": "Output",
+            "title": "Output Format",
+            "type": "string",
+            "description": "Format for the output data",
+            "enum": ["rag", "finetune-openai", "finetune-alpaca", "markdown"],
+            "enumTitles": ["RAG (chunks with metadata)", "Fine-tuning (OpenAI JSONL)", "Fine-tuning (Alpaca)", "Markdown (.md file)"],
+            "default": "rag"
+        },
+        "generateQA": {
+            "sectionCaption": "AI Enrichment",
+            "sectionDescription": "Use AI to enhance your chunks with Q&A pairs and summaries. Requires an LLM API key.",
+            "title": "Generate Q&A Pairs",
+            "type": "boolean",
+            "description": "Generate question-answer pairs from each chunk. Great for fine-tuning datasets and improved RAG matching.",
+            "default": false
+        },
+        "generateSummary": {
+            "title": "Generate Summaries",
+            "type": "boolean",
+            "description": "Generate a brief summary of each chunk.",
+            "default": false
+        },
+        "questionsPerChunk": {
+            "title": "Questions Per Chunk",
+            "type": "integer",
+            "description": "How many Q&A pairs to generate per chunk.",
+            "default": 3,
+            "minimum": 1,
+            "maximum": 10
+        },
+        "llmProvider": {
+            "title": "LLM Provider",
+            "type": "string",
+            "description": "Which AI provider to use for Q&A and summary generation.",
+            "enum": ["openai", "anthropic"],
+            "enumTitles": ["OpenAI (GPT-4o-mini)", "Anthropic (Claude 3 Haiku)"],
+            "default": "openai"
+        },
+        "llmApiKey": {
+            "title": "LLM API Key",
+            "type": "string",
+            "description": "Your API key for the selected LLM provider.",
+            "editor": "textfield",
+            "isSecret": true
+        },
+        "generateEmbeddings": {
+            "sectionCaption": "Vector Embeddings",
+            "sectionDescription": "Generate vector embeddings for semantic search. Embeddings can be directly imported into vector databases like Pinecone, Weaviate, or Chroma.",
+            "title": "Generate Embeddings",
+            "type": "boolean",
+            "description": "Generate vector embeddings for each chunk.",
+            "default": false
+        },
+        "embeddingModel": {
+            "title": "Embedding Model",
+            "type": "string",
+            "description": "Which OpenAI embedding model to use.",
+            "enum": ["text-embedding-3-small", "text-embedding-3-large", "text-embedding-ada-002"],
+            "enumTitles": ["text-embedding-3-small (1536 dim, cheapest)", "text-embedding-3-large (3072 dim, best quality)", "text-embedding-ada-002 (1536 dim, legacy)"],
+            "default": "text-embedding-3-small"
+        },
+        "embeddingApiKey": {
+            "title": "Embedding API Key",
+            "type": "string",
+            "description": "Your OpenAI API key for generating embeddings.",
+            "editor": "textfield",
+            "isSecret": true
+        }
+    },
+    "required": ["startUrl"]
+}

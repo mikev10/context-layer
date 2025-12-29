@@ -1,0 +1,36 @@
+{
+	"name": "context-layer",
+	"version": "0.0.1",
+	"type": "module",
+	"description": "Transform any knowledge base or documentation into AI-ready data for RAG and fine-tuning",
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"dependencies": {
+		"apify": "^3.5.2",
+		"crawlee": "^3.11.0",
+		"cheerio": "^1.0.0-rc.12",
+		"openai": "^4.70.0",
+		"@anthropic-ai/sdk": "^0.30.0",
+		"tiktoken": "^1.0.22"
+	},
+	"devDependencies": {
+		"@apify/eslint-config": "^1.0.0",
+		"@apify/tsconfig": "^0.1.1",
+		"@types/node": "^22.15.32",
+		"eslint": "^9.29.0",
+		"tsx": "^4.20.3",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.34.1"
+	},
+	"scripts": {
+		"start": "npm run start:dev",
+		"start:prod": "node dist/main.js",
+		"start:dev": "tsx src/main.ts",
+		"build": "tsc",
+		"lint": "eslint",
+		"lint:fix": "eslint --fix"
+	},
+	"author": "It's not you it's me",
+	"license": "ISC"
+}

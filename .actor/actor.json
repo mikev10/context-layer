@@ -1,0 +1,38 @@
+{
+    "actorSpecification": 1,
+    "name": "context-layer",
+    "title": "Context Layer - Docs to AI Pipeline",
+    "description": "Transform any knowledge base or documentation into AI-ready data for RAG systems and LLM fine-tuning",
+    "version": "0.1",
+    "buildTag": "latest",
+    "meta": {
+        "templateId": "ts-start"
+    },
+    "input": "./input_schema.json",
+    "dockerfile": "../Dockerfile",
+    "readme": "./README.md",
+    "storages": {
+        "dataset": {
+            "actorSpecification": 1,
+            "title": "Processed chunks",
+            "views": {
+                "overview": {
+                    "title": "Overview",
+                    "transformation": {
+                        "fields": ["id", "content", "source_url", "title", "chunk_index"]
+                    },
+                    "display": {
+                        "component": "table",
+                        "properties": {
+                            "id": { "label": "Chunk ID", "format": "text" },
+                            "content": { "label": "Content", "format": "text" },
+                            "source_url": { "label": "Source", "format": "link" },
+                            "title": { "label": "Title", "format": "text" },
+                            "chunk_index": { "label": "Index", "format": "number" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+	"id": "bh1swVzfBwP8Dsv",
+	"json": "{\"id\":\"bh1swVzfBwP8Dsv\",\"url\":\"https://docs.apify.com/platform/actors\",\"loadedUrl\":\"https://docs.apify.com/platform/actors\",\"uniqueKey\":\"https://docs.apify.com/platform/actors\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"depth\":0,\"__crawlee\":{\"state\":4}},\"handledAt\":\"2025-12-28T02:52:54.910Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://docs.apify.com/platform/actors",
+	"url": "https://docs.apify.com/platform/actors"
+}
