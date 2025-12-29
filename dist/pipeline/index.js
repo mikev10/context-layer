@@ -28,7 +28,8 @@ export async function runPipeline(input) {
     const startTime = Date.now();
     // Stage 1: Crawl
     log.info('Stage 1: Crawling site...');
-    const { pages: crawledPages, stats: crawlStats } = await crawlSite(input.crawlOptions);
+    const crawlResult = await crawlSite(input.crawlOptions);
+    const crawledPages = crawlResult.pages;
     if (crawledPages.length === 0) {
         log.warning('No pages crawled. Check if the URL is accessible.');
         return {

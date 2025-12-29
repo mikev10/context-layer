@@ -132,8 +132,8 @@ export async function runBatchMode() {
             await Actor.charge({ eventName: 'pages-processed-10', count: chargeEvents });
             log.info(`Charged for ${chargeEvents} x 10 pages ($${(chargeEvents * 0.10).toFixed(2)})`);
         }
-        catch {
-            log.warning('Charging not available (pay-per-event not configured)');
+        catch (error) {
+            log.warning('Charging not available (pay-per-event not configured)', { error });
         }
     }
     log.info('Context Layer complete!', report);

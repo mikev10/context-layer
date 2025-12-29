@@ -16,6 +16,16 @@ export {
 } from './format.js';
 
 /**
+ * Escape special regex characters in a string
+ *
+ * @param str - The string to escape
+ * @returns The escaped string safe for use in RegExp
+ */
+function escapeRegex(str: string): string {
+    return str.replace(/[.+^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
  * Check if a URL matches any of the provided glob patterns
  *
  * Supports glob-style patterns:
@@ -31,11 +41,13 @@ export function matchesPattern(url: string, patterns: string[]): boolean {
     if (patterns.length === 0) return true;
 
     return patterns.some(pattern => {
+        // First escape regex special chars (except *, ?, which are glob wildcards)
+        const escaped = escapeRegex(pattern);
         const regex = new RegExp(
-            pattern
-                .replace(/\*\*/g, '.*')
-                .replace(/\*/g, '[^/]*')
-                .replace(/\?/g, '.')
+            escaped
+                .replace(/\*\*/g, '.*')      // ** → match any chars including /
+                .replace(/\*/g, '[^/]*')     // * → match any chars except /
+                .replace(/\?/g, '.')         // ? → match single char
         );
         return regex.test(url);
     });

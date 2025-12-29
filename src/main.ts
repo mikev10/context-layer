@@ -12,7 +12,7 @@
  * - Standby Mode: MCP server for AI agent integration (Phase 3)
  */
 
-import { Actor } from 'apify';
+import { Actor, log } from 'apify';
 
 /**
  * Detect which mode the Actor should run in
@@ -50,6 +50,6 @@ async function main(): Promise<void> {
 
 // Run and handle errors
 main().catch((error) => {
-    console.error('Actor failed:', error);
+    log.error('Actor failed:', error);
     process.exit(1);
 });
