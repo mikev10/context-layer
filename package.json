@@ -7,16 +7,17 @@
 		"node": ">=18.0.0"
 	},
 	"dependencies": {
-		"apify": "^3.5.2",
-		"crawlee": "^3.11.0",
-		"cheerio": "^1.0.0-rc.12",
-		"openai": "^4.70.0",
 		"@anthropic-ai/sdk": "^0.30.0",
+		"apify": "^3.5.2",
+		"cheerio": "^1.0.0-rc.12",
+		"crawlee": "^3.11.0",
+		"openai": "^4.70.0",
 		"tiktoken": "^1.0.22"
 	},
 	"devDependencies": {
 		"@apify/eslint-config": "^1.0.0",
 		"@apify/tsconfig": "^0.1.1",
+		"@eslint/js": "^9.39.2",
 		"@types/node": "^22.15.32",
 		"eslint": "^9.29.0",
 		"tsx": "^4.20.3",
@@ -28,8 +29,9 @@
 		"start:prod": "node dist/main.js",
 		"start:dev": "tsx src/main.ts",
 		"build": "tsc",
-		"lint": "eslint",
-		"lint:fix": "eslint --fix"
+		"type-check": "tsc --noEmit",
+		"lint": "eslint src/",
+		"lint:fix": "eslint src/ --fix"
 	},
 	"author": "It's not you it's me",
 	"license": "ISC"
