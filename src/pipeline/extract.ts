@@ -128,8 +128,9 @@ function cleanContent(content: string): string {
 export function extractContent(
     html: string,
     url: string,
-    _options: ExtractOptions = {}
+    options: ExtractOptions = {}
 ): ExtractedPage {
+    const minContentLength = options.minContentLength ?? 0;
     const $ = cheerio.load(html);
 
     // Remove unwanted elements
@@ -162,6 +163,12 @@ export function extractContent(
 
     // Clean up the content
     mainContent = cleanContent(mainContent);
+
+    // Return empty content if below minimum length threshold
+    // This allows extractPages to filter out short content
+    if (mainContent.length < minContentLength) {
+        mainContent = '';
+    }
 
     return {
         url,

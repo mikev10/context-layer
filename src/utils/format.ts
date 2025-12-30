@@ -7,7 +7,14 @@
  * - Markdown (human-readable document)
  */
 
-import type { Chunk, EnrichmentConfig } from '../types/index.js';
+import type {
+    Chunk,
+    EnrichmentConfig,
+    RAGOutput,
+    OpenAIFineTuneOutput,
+    AlpacaFineTuneOutput,
+    FormattedOutput,
+} from '../types/index.js';
 
 /**
  * Format chunks based on selected output format
@@ -21,21 +28,16 @@ export function formatOutput(
     chunks: Chunk[],
     format: string,
     enrichment: EnrichmentConfig
-): unknown[] {
+): FormattedOutput[] {
     switch (format) {
         case 'rag':
-            return chunks.map(chunk => {
-                const output: Record<string, unknown> = {
-                    id: chunk.id,
-                    content: chunk.content,
-                    metadata: chunk.metadata,
-                    enrichment: chunk.enrichment || {},
-                };
-                if (chunk.embedding) {
-                    output.embedding = chunk.embedding;
-                }
-                return output;
-            });
+            return chunks.map((chunk): RAGOutput => ({
+                id: chunk.id,
+                content: chunk.content,
+                metadata: chunk.metadata,
+                enrichment: chunk.enrichment || {},
+                ...(chunk.embedding && { embedding: chunk.embedding }),
+            }));
 
         case 'finetune-openai':
             return generateOpenAIFormat(chunks, enrichment);
@@ -135,8 +137,8 @@ export function generateMarkdownDocument(
 export function generateOpenAIFormat(
     chunks: Chunk[],
     enrichment: EnrichmentConfig
-): unknown[] {
-    const records: unknown[] = [];
+): OpenAIFineTuneOutput[] {
+    const records: OpenAIFineTuneOutput[] = [];
 
     for (const chunk of chunks) {
         if (enrichment.enabled && chunk.enrichment?.questions) {
@@ -177,8 +179,8 @@ export function generateOpenAIFormat(
 export function generateAlpacaFormat(
     chunks: Chunk[],
     enrichment: EnrichmentConfig
-): unknown[] {
-    const records: unknown[] = [];
+): AlpacaFineTuneOutput[] {
+    const records: AlpacaFineTuneOutput[] = [];
 
     for (const chunk of chunks) {
         if (enrichment.enabled && chunk.enrichment?.questions) {

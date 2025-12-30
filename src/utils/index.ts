@@ -15,13 +15,20 @@ export {
     generateAlpacaFormat,
 } from './format.js';
 
+/** Maximum pattern length to prevent ReDoS attacks */
+const MAX_PATTERN_LENGTH = 1000;
+
 /**
  * Escape special regex characters in a string
  *
  * @param str - The string to escape
  * @returns The escaped string safe for use in RegExp
+ * @throws Error if string exceeds MAX_PATTERN_LENGTH
  */
 function escapeRegex(str: string): string {
+    if (str.length > MAX_PATTERN_LENGTH) {
+        throw new Error(`Pattern too long (max ${MAX_PATTERN_LENGTH} chars): ${str.slice(0, 50)}...`);
+    }
     return str.replace(/[.+^${}()|[\]\\]/g, '\\$&');
 }
 

@@ -19,7 +19,7 @@ import type { ExtractedPage, ExtractOptions, CrawledPage } from '../types/index.
  * @param options - Extraction options
  * @returns Extracted page data
  */
-export declare function extractContent(html: string, url: string, _options?: ExtractOptions): ExtractedPage;
+export declare function extractContent(html: string, url: string, options?: ExtractOptions): ExtractedPage;
 /**
  * Extract content from multiple crawled pages
  *

@@ -17,18 +17,13 @@
 export function formatOutput(chunks, format, enrichment) {
     switch (format) {
         case 'rag':
-            return chunks.map(chunk => {
-                const output = {
-                    id: chunk.id,
-                    content: chunk.content,
-                    metadata: chunk.metadata,
-                    enrichment: chunk.enrichment || {},
-                };
-                if (chunk.embedding) {
-                    output.embedding = chunk.embedding;
-                }
-                return output;
-            });
+            return chunks.map((chunk) => ({
+                id: chunk.id,
+                content: chunk.content,
+                metadata: chunk.metadata,
+                enrichment: chunk.enrichment || {},
+                ...(chunk.embedding && { embedding: chunk.embedding }),
+            }));
         case 'finetune-openai':
             return generateOpenAIFormat(chunks, enrichment);
         case 'finetune-alpaca':

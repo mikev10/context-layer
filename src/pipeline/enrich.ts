@@ -84,8 +84,8 @@ function parseEnrichmentResponse(
         }
 
         return enrichment;
-    } catch {
-        log.warning('Failed to parse enrichment response');
+    } catch (error) {
+        log.warning(`Failed to parse enrichment response: ${error instanceof Error ? error.message : String(error)}`);
         return {};
     }
 }

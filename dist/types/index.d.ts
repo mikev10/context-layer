@@ -165,6 +165,41 @@ export interface PipelineOutput {
     };
 }
 /**
+ * RAG output format - vector DB ready
+ */
+export interface RAGOutput {
+    id: string;
+    content: string;
+    metadata: ChunkMetadata;
+    enrichment: Enrichment;
+    embedding?: number[];
+}
+/**
+ * OpenAI fine-tuning message format
+ */
+export interface OpenAIMessage {
+    role: 'system' | 'user' | 'assistant';
+    content: string;
+}
+/**
+ * OpenAI fine-tuning output format
+ */
+export interface OpenAIFineTuneOutput {
+    messages: OpenAIMessage[];
+}
+/**
+ * Alpaca fine-tuning output format
+ */
+export interface AlpacaFineTuneOutput {
+    instruction: string;
+    input: string;
+    output: string;
+}
+/**
+ * Union type for all output formats
+ */
+export type FormattedOutput = RAGOutput | OpenAIFineTuneOutput | AlpacaFineTuneOutput | Chunk;
+/**
  * Processing report saved to key-value store
  */
 export interface ProcessingReport {

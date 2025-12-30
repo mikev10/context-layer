@@ -43,8 +43,8 @@ async function main() {
     await Actor.exit();
 }
 // Run and handle errors
-main().catch((error) => {
+main().catch(async (error) => {
     log.error('Actor failed:', error);
-    process.exit(1);
+    await Actor.exit({ exitCode: 1 });
 });
 //# sourceMappingURL=main.js.map

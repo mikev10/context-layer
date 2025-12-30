@@ -6,7 +6,7 @@
  * - Fine-tuning (OpenAI and Alpaca formats)
  * - Markdown (human-readable document)
  */
-import type { Chunk, EnrichmentConfig } from '../types/index.js';
+import type { Chunk, EnrichmentConfig, OpenAIFineTuneOutput, AlpacaFineTuneOutput, FormattedOutput } from '../types/index.js';
 /**
  * Format chunks based on selected output format
  *
@@ -15,7 +15,7 @@ import type { Chunk, EnrichmentConfig } from '../types/index.js';
  * @param enrichment - The enrichment configuration
  * @returns Formatted output records
  */
-export declare function formatOutput(chunks: Chunk[], format: string, enrichment: EnrichmentConfig): unknown[];
+export declare function formatOutput(chunks: Chunk[], format: string, enrichment: EnrichmentConfig): FormattedOutput[];
 /**
  * Generate a proper Markdown document from chunks
  *
@@ -38,7 +38,7 @@ export declare function generateMarkdownDocument(chunks: Chunk[], enrichment: En
  * @param enrichment - The enrichment configuration
  * @returns Array of OpenAI format records
  */
-export declare function generateOpenAIFormat(chunks: Chunk[], enrichment: EnrichmentConfig): unknown[];
+export declare function generateOpenAIFormat(chunks: Chunk[], enrichment: EnrichmentConfig): OpenAIFineTuneOutput[];
 /**
  * Generate Alpaca fine-tuning format
  *
@@ -48,5 +48,5 @@ export declare function generateOpenAIFormat(chunks: Chunk[], enrichment: Enrich
  * @param enrichment - The enrichment configuration
  * @returns Array of Alpaca format records
  */
-export declare function generateAlpacaFormat(chunks: Chunk[], enrichment: EnrichmentConfig): unknown[];
+export declare function generateAlpacaFormat(chunks: Chunk[], enrichment: EnrichmentConfig): AlpacaFineTuneOutput[];
 //# sourceMappingURL=format.d.ts.map
