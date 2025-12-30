@@ -79,7 +79,7 @@ context-layer/
 ├── package.json
 ├── tsconfig.json
 ├── Dockerfile
-└── MCP_IMPLEMENTATION_PLAN.md
+└── (see PRPs/plans/mcp-implementation-PLAN.md)
 ```
 
 ### Planned (Modular - Phase 1+)
@@ -425,7 +425,7 @@ try {
 
 ## MCP Implementation Reference
 
-**See**: `MCP_IMPLEMENTATION_PLAN.md` for detailed implementation phases.
+**See**: `PRPs/plans/mcp-implementation-PLAN.md` for detailed implementation phases.
 
 **Quick Reference:**
 - Mode detection: `process.env.APIFY_META_ORIGIN === 'STANDBY'`
@@ -493,5 +493,5 @@ try {
 ✅ Use `log.info/warning/error` for visibility
 ✅ Run `npm run build` before committing
 ✅ Test locally with `npm start` before pushing
-✅ Reference `MCP_IMPLEMENTATION_PLAN.md` for architecture decisions
+✅ Reference `PRPs/plans/mcp-implementation-PLAN.md` for architecture decisions
 ✅ Update TASK.md after completing work
