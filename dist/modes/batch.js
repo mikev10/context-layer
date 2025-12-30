@@ -7,6 +7,8 @@
 import { Actor, log } from 'apify';
 import { runPipeline } from '../pipeline/index.js';
 import { formatOutput, generateMarkdownDocument, getDefaultChunkSize } from '../utils/index.js';
+import { createKnowledgeBase, getKnowledgeBase, generateKBId, saveChunks, convertToKBChunks, updateKnowledgeBaseStats, updateKnowledgeBaseStatus, } from '../storage/knowledge-base.js';
+import { createJob, updateJobProgress, completeJob, failJob } from '../storage/jobs.js';
 /**
  * Run the Actor in batch processing mode
  *
@@ -35,6 +37,7 @@ export async function runBatchMode() {
         generateEmbeddings: input.generateEmbeddings ?? false,
         embeddingModel: input.embeddingModel || 'text-embedding-3-small',
         embeddingApiKey: input.embeddingApiKey,
+        _knowledgeBaseId: input._knowledgeBaseId,
     };
     // Enrichment is enabled if either Q&A or summary generation is requested
     const enrichmentEnabled = config.generateQA || config.generateSummary;
@@ -61,35 +64,77 @@ export async function runBatchMode() {
     if (config.generateEmbeddings && !config.embeddingApiKey) {
         throw new Error('Embedding API key is required when embeddings are enabled');
     }
-    // Run the pipeline
-    const result = await runPipeline({
-        crawlOptions: {
-            startUrl: config.startUrl,
-            maxPages: config.maxPages,
-            crawlDepth: config.crawlDepth,
-            urlPatterns: config.urlPatterns,
-            excludePatterns: config.excludePatterns,
-        },
-        chunkOptions: {
+    // ========================================================================
+    // Knowledge Base & Job Setup
+    // ========================================================================
+    // Get or create run ID for job tracking
+    const runId = Actor.getEnv().actorRunId ?? `local-${Date.now()}`;
+    // Use existing KB ID (MCP spawn case) or generate new one
+    const kbId = config._knowledgeBaseId ?? generateKBId(config.startUrl);
+    let existingKB = await getKnowledgeBase(kbId);
+    // Create KB if it doesn't exist
+    if (!existingKB) {
+        existingKB = await createKnowledgeBase(config.startUrl, {
             chunkSize: config.chunkSize,
             chunkOverlap: config.chunkOverlap,
             outputFormat: config.outputFormat,
-        },
-        enrichOptions: enrichmentEnabled ? {
-            generateQA: config.generateQA,
-            generateSummary: config.generateSummary,
-            questionsPerChunk: config.questionsPerChunk,
-            llmProvider: config.llmProvider,
-            llmApiKey: config.llmApiKey,
-        } : undefined,
-        embedOptions: config.generateEmbeddings ? {
-            model: config.embeddingModel,
-            apiKey: config.embeddingApiKey,
-        } : undefined,
-    });
-    if (result.pages.length === 0) {
-        log.warning('No content extracted. Check if the URL is accessible and contains content.');
-        return;
+            hasEmbeddings: config.generateEmbeddings,
+            hasEnrichment: enrichmentEnabled,
+        });
+    }
+    else {
+        // Update status to processing for re-crawl
+        await updateKnowledgeBaseStatus(kbId, 'processing');
+    }
+    // Create job record
+    const job = await createJob(runId, kbId);
+    log.info(`Job created: ${job.id}`, { knowledgeBaseId: kbId });
+    // Run the pipeline with error handling for job tracking
+    let result;
+    try {
+        // Update job to crawling phase
+        await updateJobProgress(runId, { phase: 'crawling', current: 0, total: config.maxPages });
+        result = await runPipeline({
+            crawlOptions: {
+                startUrl: config.startUrl,
+                maxPages: config.maxPages,
+                crawlDepth: config.crawlDepth,
+                urlPatterns: config.urlPatterns,
+                excludePatterns: config.excludePatterns,
+            },
+            chunkOptions: {
+                chunkSize: config.chunkSize,
+                chunkOverlap: config.chunkOverlap,
+                outputFormat: config.outputFormat,
+            },
+            enrichOptions: enrichmentEnabled ? {
+                generateQA: config.generateQA,
+                generateSummary: config.generateSummary,
+                questionsPerChunk: config.questionsPerChunk,
+                llmProvider: config.llmProvider,
+                llmApiKey: config.llmApiKey,
+            } : undefined,
+            embedOptions: config.generateEmbeddings ? {
+                model: config.embeddingModel,
+                apiKey: config.embeddingApiKey,
+            } : undefined,
+        });
+        if (result.pages.length === 0) {
+            log.warning('No content extracted. Check if the URL is accessible and contains content.');
+            await failJob(runId, 'No content extracted from the provided URL');
+            return;
+        }
+        // Update job to saving phase
+        await updateJobProgress(runId, {
+            phase: 'saving',
+            current: result.stats.pagesProcessed,
+            total: result.stats.pagesProcessed,
+        });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        await failJob(runId, errorMessage);
+        throw error;
     }
     // Format output
     log.info(`Formatting output as ${config.outputFormat}...`);
@@ -125,6 +170,30 @@ export async function runBatchMode() {
         timestamp: new Date().toISOString(),
     };
     await Actor.setValue('report', JSON.stringify(report, null, 2), { contentType: 'application/json' });
+    // ========================================================================
+    // Save to Knowledge Base
+    // ========================================================================
+    try {
+        // Convert pipeline chunks to KB chunks and save
+        const kbChunks = convertToKBChunks(result.chunks, kbId);
+        await saveChunks(kbId, kbChunks);
+        // Update KB stats with page count
+        await updateKnowledgeBaseStats(kbId, {
+            pageCount: result.stats.pagesProcessed,
+        });
+        // Complete job
+        await completeJob(runId);
+        log.info(`Knowledge base saved: ${kbId}`, {
+            chunks: kbChunks.length,
+            pages: result.stats.pagesProcessed,
+        });
+    }
+    catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        log.error('Failed to save to knowledge base', { error: errorMessage });
+        await failJob(runId, `Failed to save KB: ${errorMessage}`);
+        // Don't throw - the standard output was already saved
+    }
     // Charge for usage (pay-per-page)
     const chargeEvents = Math.ceil(result.stats.pagesProcessed / 10);
     if (chargeEvents > 0) {
