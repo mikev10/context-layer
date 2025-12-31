@@ -273,3 +273,70 @@ export interface ProcessingReport {
     embeddingModel: string | null;
     timestamp: string;
 }
+
+// ============================================================================
+// Storage Types (Phase 2)
+// ============================================================================
+
+/**
+ * Knowledge base metadata
+ */
+export interface KnowledgeBase {
+    id: string;                    // Deterministic ID (MD5 hash of sourceUrl)
+    name: string;                  // Human-readable name (hostname)
+    sourceUrl: string;             // Original URL crawled
+    createdAt: string;             // ISO timestamp
+    updatedAt: string;             // ISO timestamp
+    status: 'processing' | 'ready' | 'failed';
+    stats: {
+        pageCount: number;
+        chunkCount: number;
+        totalTokens: number;
+    };
+    config: {
+        chunkSize: number;
+        chunkOverlap: number;
+        outputFormat: string;
+        hasEmbeddings: boolean;
+        hasEnrichment: boolean;
+    };
+}
+
+/**
+ * Chunk stored in a knowledge base
+ */
+export interface KnowledgeBaseChunk {
+    id: string;                    // Unique chunk ID
+    knowledgeBaseId: string;       // Parent KB reference
+    content: string;               // Chunk text content
+    tokenCount: number;            // Token count
+    embedding?: number[];          // Optional embedding vector
+    metadata: {
+        sourceUrl: string;         // Page URL
+        title: string;             // Page title
+        section?: string;          // Section heading
+        chunkIndex: number;        // Position in document
+        totalChunks: number;       // Total chunks from document
+    };
+    enrichment?: {
+        summary?: string;
+        questions?: string[];
+    };
+}
+
+/**
+ * Job tracking record
+ */
+export interface Job {
+    id: string;                    // Actor run ID
+    knowledgeBaseId: string;       // Associated KB
+    status: 'pending' | 'running' | 'completed' | 'failed';
+    progress: {
+        phase: 'crawling' | 'extracting' | 'chunking' | 'enriching' | 'embedding' | 'saving';
+        current: number;
+        total: number;
+    };
+    startedAt: string;
+    completedAt?: string;
+    error?: string;
+}
